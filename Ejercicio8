@@ -1,0 +1,104 @@
+using System;
+
+namespace ejercicio8
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Empleado[] empleados = new Empleado[] {
+            new Administrativo("Ana", 20000000, DateTime.Parse("26/4/2018"), 10000) {Premio=1000},
+            new Vendedor("Diego", 30000000, DateTime.Parse("2/4/2010"), 10000) {Comision=2000},
+            new Vendedor("Luis", 33333333, DateTime.Parse("30/12/2011"), 10000) {Comision=2000}
+            };
+        foreach (Empleado e in empleados)
+            {
+            Console.WriteLine(e);
+            e.AumentarSalario();
+            Console.WriteLine(e);
+            }
+
+            Console.WriteLine("Hello World!");
+            Console.ReadLine();
+        }
+    }
+    abstract class Empleado{
+	public string Nombre{get; }
+	public int DNI {get; }
+	public DateTime FechaDeIngreso{get; }
+	public double SalarioBase{get; protected set; }
+	public abstract double Salario {get;}
+	public abstract void AumentarSalario(); 
+	
+	protected int Antiguedad{
+		get{
+			        DateTime actual = DateTime.Now; 
+               		int antiguedad = actual.Year - FechaDeIngreso.Year;
+                    if (actual.Month< FechaDeIngreso.Month) antiguedad--; 
+                    else { if (actual.Month == FechaDeIngreso.Month)
+                            if (actual.Day < FechaDeIngreso.Day) antiguedad--; }
+                return antiguedad; 
+		}}
+	public Empleado(string unNombre, int unDNI, DateTime unaFecha, double unSalario){
+		Nombre = unNombre; 
+		DNI = unDNI; 
+		FechaDeIngreso = unaFecha; 
+		SalarioBase = unSalario; 
+	}
+    public override string ToString(){
+        string aux = $"Nombre: {Nombre}, DNI: {DNI}, Antigüedad: {Antiguedad} \n" 
+        +$" Salario Base: {this.SalarioBase}, Salario: {this.Salario}\n"
+        +"--------------------\n";
+        return aux;  
+    }
+	
+}
+
+class Administrativo: Empleado{
+	public double Premio {get; set;}
+	
+	public override double Salario{
+		get{ return SalarioBase + Premio ; } }
+
+	public Administrativo (string unNombre, int unDNI, DateTime unaFecha, double unSalario): base (unNombre, unDNI, unaFecha, unSalario){}
+
+	public override void AumentarSalario(){
+		double aumento = (Antiguedad * 0.01) + 1;  
+		SalarioBase = SalarioBase * aumento;	
+		}
+
+        public override string ToString()
+        {
+            string aux = $"Administrativo {base.ToString()}"; 
+           
+            return aux;           
+        }
+    
+}
+
+
+class Vendedor: Empleado{
+	public double Comision{get; set; }
+
+	public override double Salario{
+		get {return SalarioBase + Comision; } }
+	public override void AumentarSalario(){
+		double aumento; 
+		if (Antiguedad < 10 ){
+			aumento=1.05;
+			SalarioBase = SalarioBase *aumento;}
+		else{
+			aumento =1.1; 
+			SalarioBase = SalarioBase *aumento; }
+		}
+	public Vendedor (string unNombre, int unDNI, DateTime unaFecha, double unSalario): base (unNombre, unDNI, unaFecha, unSalario){}
+    
+    public override string ToString()
+        {
+            string aux = $"Vendedor {base.ToString()}"; 
+           
+            return aux;           
+        }
+}
+
+}
